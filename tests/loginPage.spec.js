@@ -2,8 +2,19 @@ const { test: base, expect } = require('@playwright/test');
 const { LoginPage } = require('../pageObjects/loginPage');
 const { allure } = require('allure-playwright');
 
+
 const test = base.extend({
     page: async ({ page }, use) => {
+        // Enable Cursor MCP features
+        await page.setExtraHTTPHeaders({
+            'x-cursor-mcp': '1'
+        });
+        
+        // Add custom attributes for better element identification
+        await page.evaluate(() => {
+            window.__CURSOR_MCP__ = true;
+        });
+        
         await use(page);
     }
 });
