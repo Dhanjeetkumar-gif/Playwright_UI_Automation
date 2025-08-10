@@ -1,10 +1,18 @@
-//import { test, expect } from '@playwright/test';
-const {test,expect} = require('@playwright/test');
-//import { LoginPage } from '../pageObjects/loginPage';
+const { test: base, expect } = require('@playwright/test');
 const { LoginPage } = require('../pageObjects/loginPage');
+const { allure } = require('allure-playwright');
 
+const test = base.extend({
+    page: async ({ page }, use) => {
+        await use(page);
+    }
+});
 
-test('Login Page', async ({ page }) => {
+test('Login Page @smoke @login', async ({ page }) => {
+    allure.epic('Authentication');
+    allure.feature('Login');
+    allure.story('Valid Login');
+    allure.description('Test valid user login with correct credentials');
     await page.goto('http://www.automationpractice.pl/index.php?controller=authentication&back=my-account');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
