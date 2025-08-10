@@ -1,0 +1,27 @@
+
+# Dependencies
+node_modules/
+
+# Playwright specific
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests-examples/
+# Test artifacts
+*.png
+*.jpg
+*.jpeg
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# IDE specific
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
