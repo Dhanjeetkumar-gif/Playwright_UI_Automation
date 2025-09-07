@@ -1,28 +1,22 @@
-// @ts-check
+// playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
 export default defineConfig({
   testDir: './tests',
-  /* Run tests in files in parallel */
+  
+  // Run tests in files in parallel
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  
+  // Fail build on CI if test.only is left
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
+  
+  // Retry on CI only
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
+  
+  // Parallel workers (1 on CI to avoid conflicts)
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+
+  // Reporters
   reporter: [
     ['html'],
     ['allure-playwright', {
@@ -31,69 +25,31 @@ export default defineConfig({
       suiteTitle: false,
     }],
   ],
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
+    headless: true, // Headless browsers
+    navigationTimeout: 120000, // 2 minutes for slow pages
+    actionTimeout: 60000, // 1 minute for clicks, fills, etc.
+    trace: 'retain-on-failure',
+    video: 'on-first-retry',
+    screenshot: 'only-on-failure',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
-
-    /* Enable Cursor MCP integration */
     launchOptions: {
-      args: ['--remote-debugging-port=9222']
+      args: [
+        '--disable-dev-shm-usage', // Prevent /dev/shm errors
+      ],
+      // Do NOT set a fixed remote debugging port to avoid conflicts
     },
+
     contextOptions: {
       recordHar: { path: 'test-results/network.har' },
     },
-    video: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    trace: 'retain-on-failure',
   },
 
-  /* Configure projects for major browsers */
+  // Browser projects
   projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });
-
