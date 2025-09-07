@@ -32,6 +32,7 @@ test('Login Page @smoke @login', async ({ page }) => {
     await loginPage.enterEmail('11dhanjeet@gmail.com');
     await loginPage.enterPassword('test1234');
     await loginPage.clickLoginButton();
+    await page.waitForLoadState('networkidle');
     
     // Verify successful login - adjust selector based on your page structure
     await expect(page.locator("//a[@class='account']")).toBeVisible();
